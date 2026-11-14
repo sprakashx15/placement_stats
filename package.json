@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "Placement & Internship Statistics and Visualization System",
   "main": "server/index.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "start": "node server/index.js",
     "server": "node server/index.js",
     "client": "npm --prefix client run dev",
     "build": "npm --prefix client run build",
-    "postinstall": "npm --prefix client install",
+    "postinstall": "npm --prefix client install --include=dev",
     "dev": "concurrently \"node server/index.js\" \"npm --prefix client run dev\""
   },
   "keywords": [

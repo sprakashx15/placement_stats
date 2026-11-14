@@ -49,7 +49,7 @@ export default function App() {
       setPlacementStats(pStats);
     } catch (err) {
       console.error('Error fetching stats:', err);
-      setError('Unable to connect to backend. Make sure the server is running on port 5001.');
+      setError(err.message || 'Unable to connect to backend.');
     } finally {
       setIsLoading(false);
     }

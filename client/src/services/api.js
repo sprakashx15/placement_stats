@@ -2,13 +2,19 @@ const API_BASE = '/api';
 
 export async function fetchBatches() {
   const res = await fetch(`${API_BASE}/batches`);
-  if (!res.ok) throw new Error('Failed to fetch batches');
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || `Failed to fetch batches (${res.status})`);
+  }
   return res.json();
 }
 
-export async function fetchPlacementStats(year = '2025-26') {
+export async function fetchPlacementStats(year = 'ALL') {
   const res = await fetch(`${API_BASE}/placements/stats?year=${encodeURIComponent(year)}`);
-  if (!res.ok) throw new Error('Failed to fetch placement stats');
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || `Failed to fetch placement stats (${res.status})`);
+  }
   return res.json();
 }
 

@@ -12,6 +12,14 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
+// Normalize URL for Vercel serverless functions (handles both /api/path and /path)
+app.use((req, res, next) => {
+  if (req.url && !req.url.startsWith('/api') && !req.url.startsWith('/_')) {
+    req.url = '/api' + (req.url.startsWith('/') ? req.url : '/' + req.url);
+  }
+  next();
+});
+
 // Ensure database is initialized on serverless or traditional start
 let isDbReady = false;
 let dbInitPromise = null;

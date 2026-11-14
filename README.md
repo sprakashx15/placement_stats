@@ -21,7 +21,7 @@ A modern, high-performance campus recruitment statistics and visualization dashb
 - **Branch-Wise Performance Table**: Full breakdown including Eligible, Total Offers, Placed, Placement %, Average CTC, Median CTC, and Highest CTC.
 
 ### 🔒 Private Admin Portal
-- **Hidden Access**: Only accessible via `#admin` (or the discrete lock in the footer).
+- **Hidden Access**: Only accessible via `#tpc_bkl` (or the discrete lock in the footer).
 - **Passcode-Protected**: Default passcode: `admin123`. The portal always requires authentication upon visiting or page refresh.
 - **Change Admin Passcode**: Built-in option to update the administrative passcode securely.
 - **Manual Data Insertion**:
@@ -65,7 +65,7 @@ npm run dev
 ```
 - Frontend: `http://localhost:3000`
 - Backend API: `http://127.0.0.1:5001`
-- Admin Portal: `http://localhost:3000/#admin` (Passcode: `admin123`)
+- Admin Portal: `http://localhost:3000/#tpc_bkl` (Passcode: `admin123`)
 
 ---
 
@@ -115,6 +115,6 @@ You can easily deploy this project online for **free** on **Render** or **Railwa
 
 ## 🔐 Administrative Access & Security
 
-- **Access URL**: Append `#admin` to your domain (e.g. `https://your-app.onrender.com/#admin`) or click the discreet lock icon in the footer.
+- **Access URL**: Append `#tpc_bkl` to your domain (e.g. `https://your-app.onrender.com/#tpc_bkl`) or click the discreet lock icon in the footer.
 - **Initial Passcode**: `admin123`
 - **Change Passcode**: Once unlocked, navigate to the **Change Passcode** tab to set your own private administrative password.

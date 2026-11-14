@@ -1068,7 +1068,7 @@ export default function AdminPage({
             <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 flex items-start space-x-2.5 text-xs text-slate-600">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
               <span>
-                Your passcode will take effect immediately. Keep it private. You will use it whenever entering through <code className="text-indigo-600 font-bold bg-white px-1 py-0.5 rounded border border-slate-200">#admin</code>.
+                Your passcode will take effect immediately. Keep it private. You will use it whenever entering through <code className="text-indigo-600 font-bold bg-white px-1 py-0.5 rounded border border-slate-200">#tpc_bkl</code>.
               </span>
             </div>
 

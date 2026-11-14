@@ -6,8 +6,8 @@ import { fetchBatches, fetchPlacementStats } from './services/api';
 import { GraduationCap, Lock } from 'lucide-react';
 
 export default function App() {
-  // Admin is a hidden page — only accessible via #admin in URL
-  const [showAdmin, setShowAdmin] = useState(() => window.location.hash === '#admin');
+  // Admin is a hidden page — only accessible via #tpc_bkl in URL
+  const [showAdmin, setShowAdmin] = useState(() => window.location.hash === '#tpc_bkl');
   const [selectedYear, setSelectedYear] = useState('ALL');
   const [batches, setBatches] = useState([]);
   const [placementStats, setPlacementStats] = useState(null);
@@ -24,7 +24,7 @@ export default function App() {
     sessionStorage.removeItem('admin_token');
 
     const onHash = () => {
-      const isHashAdmin = window.location.hash === '#admin';
+      const isHashAdmin = window.location.hash === '#tpc_bkl';
       setShowAdmin(isHashAdmin);
       if (!isHashAdmin) {
         setIsAdmin(false);
@@ -121,7 +121,7 @@ export default function App() {
             <span>&copy; {new Date().getFullYear()}</span>
           </div>
           <a
-            href="#admin"
+            href="#tpc_bkl"
             className="p-1.5 rounded-lg text-slate-300 hover:text-slate-600 hover:bg-slate-100 transition-colors"
             title="Admin Login Portal"
           >

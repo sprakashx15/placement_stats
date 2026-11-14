@@ -1,0 +1,33 @@
+{
+  "name": "placement_stats",
+  "version": "1.0.0",
+  "description": "Placement & Internship Statistics and Visualization System",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "server": "node server/index.js",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client run build",
+    "postinstall": "npm --prefix client install",
+    "dev": "concurrently \"node server/index.js\" \"npm --prefix client run dev\""
+  },
+  "keywords": [
+    "placements",
+    "internships",
+    "statistics",
+    "analytics",
+    "visualization"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.10",
+    "express": "^5.3.0",
+    "sqlite3": "^6.0.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}

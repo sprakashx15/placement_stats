@@ -80,12 +80,22 @@ export default function App() {
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         {error && (
-          <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-sm flex items-center justify-between">
+          <div className="mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <span>{error}</span>
-            <button onClick={() => loadData(selectedYear)}
-              className="px-3 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold hover:bg-rose-700 cursor-pointer">
-              Retry
-            </button>
+            <div className="flex items-center space-x-2 shrink-0">
+              <a
+                href="/api/health"
+                target="_blank"
+                rel="noreferrer"
+                className="px-3 py-1 bg-white border border-rose-300 text-rose-700 rounded-lg text-xs font-semibold hover:bg-rose-100"
+              >
+                Check /api/health
+              </a>
+              <button onClick={() => loadData(selectedYear)}
+                className="px-3 py-1 bg-rose-600 text-white rounded-lg text-xs font-bold hover:bg-rose-700 cursor-pointer">
+                Retry
+              </button>
+            </div>
           </div>
         )}
 

@@ -401,9 +401,14 @@ export default function AdminPage({
             />
           </div>
           {loginError && (
-            <div className="flex items-center space-x-2 text-rose-600 text-xs font-semibold p-2.5 bg-rose-50 rounded-xl border border-rose-200 text-left">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{loginError}</span>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 text-rose-600 text-xs font-semibold p-2.5 bg-rose-50 rounded-xl border border-rose-200 text-left">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{loginError}</span>
+              </div>
+              <div className="text-left text-[11px] text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                Troubleshoot: <a href="/api/health" target="_blank" rel="noreferrer" className="text-indigo-600 font-bold hover:underline">Click here to check backend connection status</a>. Default passcode is <code className="font-mono bg-white px-1 py-0.5 rounded border border-slate-300 font-bold">admin123</code>.
+              </div>
             </div>
           )}
           <button
@@ -412,6 +417,7 @@ export default function AdminPage({
           >
             Unlock Portal
           </button>
+          <p className="text-[11px] text-slate-400">Default passcode: <span className="font-mono font-bold text-slate-600">admin123</span></p>
           <div className="pt-2">
             <button
               type="button"

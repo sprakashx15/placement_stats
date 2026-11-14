@@ -3,14 +3,21 @@ const path = require('path');
 let tursoClient = null;
 let db = null;
 
+function cleanEnv(val) {
+  if (!val) return '';
+  return val.trim().replace(/^["']|["']$/g, '');
+}
+
 function getClient() {
   if (tursoClient) return tursoClient;
-  if (process.env.TURSO_DATABASE_URL) {
+  const rawUrl = cleanEnv(process.env.TURSO_DATABASE_URL);
+  const rawToken = cleanEnv(process.env.TURSO_AUTH_TOKEN);
+  if (rawUrl) {
     try {
       const { createClient } = require('@libsql/client');
       tursoClient = createClient({
-        url: process.env.TURSO_DATABASE_URL.trim(),
-        authToken: (process.env.TURSO_AUTH_TOKEN || '').trim()
+        url: rawUrl,
+        authToken: rawToken
       });
       console.log('Connected to Turso Cloud SQLite Database');
       return tursoClient;
@@ -312,4 +319,4 @@ async function getPlacementAnalytics(academicYear) {
   };
 }
 
-module.exports = { db, run, get, all, initDb, resetCleanDb, getPlacementAnalytics };
+module.exports = { db, run, get, all, initDb, resetCleanDb, getPlacementAnalytics, getClient, getLocalDb };

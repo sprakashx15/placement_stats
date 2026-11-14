@@ -1,32 +1,40 @@
 const API_BASE = '/api';
 
+async function parseResponse(res, fallbackMessage) {
+  let data = {};
+  try {
+    data = await res.json();
+  } catch (e) {
+    // Non-JSON response (e.g. HTML 404 or 502)
+  }
+  if (!res.ok) {
+    throw new Error(data.error || `${fallbackMessage} (HTTP ${res.status})`);
+  }
+  return data;
+}
+
+export async function checkBackendHealth() {
+  const res = await fetch(`${API_BASE}/health`);
+  return parseResponse(res, 'Backend health check failed');
+}
+
 export async function fetchBatches() {
   const res = await fetch(`${API_BASE}/batches`);
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.error || `Failed to fetch batches (${res.status})`);
-  }
-  return res.json();
+  return parseResponse(res, 'Failed to fetch batches');
 }
 
 export async function fetchPlacementStats(year = 'ALL') {
   const res = await fetch(`${API_BASE}/placements/stats?year=${encodeURIComponent(year)}`);
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.error || `Failed to fetch placement stats (${res.status})`);
-  }
-  return res.json();
+  return parseResponse(res, 'Failed to fetch placement stats');
 }
 
 export async function adminLogin(passcode) {
   const res = await fetch(`${API_BASE}/admin/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ passcode })
+    body: JSON.stringify({ passcode: (passcode || '').trim() })
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Admin login failed');
-  return data;
+  return parseResponse(res, 'Admin authentication failed');
 }
 
 export async function changeAdminPasscode(current_passcode, new_passcode, adminToken) {
@@ -36,11 +44,12 @@ export async function changeAdminPasscode(current_passcode, new_passcode, adminT
       'Content-Type': 'application/json',
       'x-admin-token': adminToken
     },
-    body: JSON.stringify({ current_passcode, new_passcode })
+    body: JSON.stringify({
+      current_passcode: (current_passcode || '').trim(),
+      new_passcode: (new_passcode || '').trim()
+    })
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to change passcode');
-  return data;
+  return parseResponse(res, 'Failed to change passcode');
 }
 
 export async function addPlacementDrive(driveData, adminToken) {
@@ -52,9 +61,7 @@ export async function addPlacementDrive(driveData, adminToken) {
     },
     body: JSON.stringify(driveData)
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to add placement drive');
-  return data;
+  return parseResponse(res, 'Failed to add placement drive');
 }
 
 export async function deletePlacementDrive(id, adminToken) {
@@ -62,9 +69,7 @@ export async function deletePlacementDrive(id, adminToken) {
     method: 'DELETE',
     headers: { 'x-admin-token': adminToken }
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to delete placement drive');
-  return data;
+  return parseResponse(res, 'Failed to delete placement drive');
 }
 
 export async function updateBatchCapacities(batchData, adminToken) {
@@ -76,9 +81,7 @@ export async function updateBatchCapacities(batchData, adminToken) {
     },
     body: JSON.stringify(batchData)
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to update batch capacities');
-  return data;
+  return parseResponse(res, 'Failed to update batch capacities');
 }
 
 export async function deleteBatch(year, adminToken) {
@@ -86,9 +89,7 @@ export async function deleteBatch(year, adminToken) {
     method: 'DELETE',
     headers: { 'x-admin-token': adminToken }
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to delete batch');
-  return data;
+  return parseResponse(res, 'Failed to delete batch');
 }
 
 export async function resetDatabase(adminToken) {
@@ -96,7 +97,5 @@ export async function resetDatabase(adminToken) {
     method: 'POST',
     headers: { 'x-admin-token': adminToken }
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Failed to reset database');
-  return data;
+  return parseResponse(res, 'Failed to reset database');
 }

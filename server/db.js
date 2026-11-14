@@ -1,35 +1,52 @@
 const path = require('path');
 
 let tursoClient = null;
-if (process.env.TURSO_DATABASE_URL) {
+let db = null;
+
+function getClient() {
+  if (tursoClient) return tursoClient;
+  if (process.env.TURSO_DATABASE_URL) {
+    try {
+      const { createClient } = require('@libsql/client');
+      tursoClient = createClient({
+        url: process.env.TURSO_DATABASE_URL.trim(),
+        authToken: (process.env.TURSO_AUTH_TOKEN || '').trim()
+      });
+      console.log('Connected to Turso Cloud SQLite Database');
+      return tursoClient;
+    } catch (err) {
+      console.error('Failed to initialize Turso client:', err.message);
+    }
+  }
+  return null;
+}
+
+function getLocalDb() {
+  if (db) return db;
   try {
-    const { createClient } = require('@libsql/client');
-    tursoClient = createClient({
-      url: process.env.TURSO_DATABASE_URL,
-      authToken: process.env.TURSO_AUTH_TOKEN
-    });
-    console.log('Connected to Turso Cloud SQLite Database');
+    const sqlite3 = require('sqlite3').verbose();
+    const dbPath = path.resolve(__dirname, 'placement_stats.db');
+    db = new sqlite3.Database(dbPath);
+    return db;
   } catch (err) {
-    console.error('Failed to initialize Turso client, falling back to local SQLite:', err.message);
+    return null;
   }
 }
 
-let db = null;
-if (!tursoClient) {
-  const sqlite3 = require('sqlite3').verbose();
-  const dbPath = path.resolve(__dirname, 'placement_stats.db');
-  db = new sqlite3.Database(dbPath);
-}
-
 function run(sql, params = []) {
-  if (tursoClient) {
-    return tursoClient.execute({ sql, args: params }).then(res => ({
+  const tc = getClient();
+  if (tc) {
+    return tc.execute({ sql, args: params }).then(res => ({
       id: res.lastInsertRowid !== undefined ? Number(res.lastInsertRowid) : 0,
       changes: res.rowsAffected || 0
     }));
   }
+  const ldb = getLocalDb();
+  if (!ldb) {
+    return Promise.reject(new Error('No database configured. Please add TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in Vercel settings.'));
+  }
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
+    ldb.run(sql, params, function (err) {
       if (err) reject(err);
       else resolve({ id: this.lastID, changes: this.changes });
     });
@@ -37,11 +54,16 @@ function run(sql, params = []) {
 }
 
 function get(sql, params = []) {
-  if (tursoClient) {
-    return tursoClient.execute({ sql, args: params }).then(res => res.rows[0] || null);
+  const tc = getClient();
+  if (tc) {
+    return tc.execute({ sql, args: params }).then(res => res.rows[0] || null);
+  }
+  const ldb = getLocalDb();
+  if (!ldb) {
+    return Promise.reject(new Error('No database configured. Please add TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in Vercel settings.'));
   }
   return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
+    ldb.get(sql, params, (err, row) => {
       if (err) reject(err);
       else resolve(row);
     });
@@ -49,11 +71,16 @@ function get(sql, params = []) {
 }
 
 function all(sql, params = []) {
-  if (tursoClient) {
-    return tursoClient.execute({ sql, args: params }).then(res => res.rows || []);
+  const tc = getClient();
+  if (tc) {
+    return tc.execute({ sql, args: params }).then(res => res.rows || []);
+  }
+  const ldb = getLocalDb();
+  if (!ldb) {
+    return Promise.reject(new Error('No database configured. Please add TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in Vercel settings.'));
   }
   return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
+    ldb.all(sql, params, (err, rows) => {
       if (err) reject(err);
       else resolve(rows || []);
     });

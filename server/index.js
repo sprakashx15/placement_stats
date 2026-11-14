@@ -12,6 +12,25 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
+// Ensure database is initialized on serverless or traditional start
+let isDbReady = false;
+let dbInitPromise = null;
+
+app.use(async (req, res, next) => {
+  if (!isDbReady) {
+    if (!dbInitPromise) {
+      dbInitPromise = initDb().then(() => {
+        isDbReady = true;
+      }).catch(err => {
+        console.error('Failed to init DB:', err.message);
+        dbInitPromise = null;
+      });
+    }
+    await dbInitPromise;
+  }
+  next();
+});
+
 // Admin authentication middleware
 async function verifyAdmin(req, res, next) {
   const authHeader = req.headers['x-admin-token'] || req.headers['authorization'];
@@ -26,7 +45,11 @@ async function verifyAdmin(req, res, next) {
 // -------- PUBLIC ENDPOINTS --------
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    database: process.env.TURSO_DATABASE_URL ? 'turso_cloud' : 'local_sqlite',
+    timestamp: new Date().toISOString()
+  });
 });
 
 app.post('/api/admin/login', async (req, res) => {

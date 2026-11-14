@@ -193,7 +193,9 @@ app.post('/api/seed', verifyAdmin, async (req, res) => {
 });
 
 // Serve frontend production build
-const distPath = path.resolve(__dirname, '../client/dist');
+const distPath = fs.existsSync(path.resolve(__dirname, '../dist'))
+  ? path.resolve(__dirname, '../dist')
+  : path.resolve(__dirname, '../client/dist');
 if (fs.existsSync(distPath)) {
   app.use(express.static(distPath));
   app.get('{*path}', (req, res, next) => {
